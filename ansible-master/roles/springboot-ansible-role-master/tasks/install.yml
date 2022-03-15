@@ -1,0 +1,81 @@
+- name: 'Install | Create if not exist application directories'
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ sb_user }}'
+    group: '{{ sb_group }}'
+    mode: '0755'
+  with_items:
+    - '{{ sb_application_dir }}'
+    - '{{ sb_application_conf_dir }}'
+    - '{{ sb_application_logs_dir }}'
+  tags: ['prepare-server']
+  become: true
+
+
+- name: 'Install | Prepare configuration files'
+  template:
+    src: '{{ item.src }}'
+    dest: "{{ item.dest | default(sb_application_conf_dir + '/' + item.src.replace('.j2', ''))}}"
+    owner: '{{ sb_user }}'
+    group: '{{ sb_group }}'
+    mode: '0600'
+  with_items: '{{ sb_configuration_files }}'
+  become: true
+  notify: restart app  
+
+- name: "Install | Copy application artifact file"
+  become: true
+  copy:
+    src: "{{ sb_app_folder  }}/{{ sb_app_artifact_id }}.{{ sb_app_extension }}"
+    dest: "{{ sb_application_dir }}/{{ sb_app_artifact_id }}.{{ sb_app_extension }}"
+    owner: "{{ sb_user }}"
+    group: "{{ sb_group }}"
+    mode: 0500
+  when: sb_app_local_present
+  notify: restart app
+
+- name: 'Install | Create a readme file'
+  template:
+    src: 'readme.info.j2'
+    dest: '{{ sb_application_dir }}/readme.info'
+    owner: '{{ sb_user }}'
+    group: '{{ sb_group }}'
+    mode: '0644'
+  become: true
+  notify:
+    - restart app
+
+- name: 'Install | Create systemd application service'
+  template:
+    src: 'systemd.service.j2'
+    dest: '{{ system_dir }}/{{ sb_app_service_name }}.service'
+    owner: '{{ sb_user }}'
+    group: '{{ sb_group }}'
+    mode: '0644'
+  become: true
+  notify:
+    - reload sysctl daemon
+    - restart app
+
+- name: Set Systemd unit enabled by default
+  become: true
+  systemd:
+    daemon_reload: yes
+    name: "{{sb_app_service_name}}"
+    enabled: yes
+
+- name: 'Install | Create systemd Environment File'
+  template:
+    src: 'environmentfile.j2'
+    dest: '{{ sb_application_dir }}/app.environment'
+    owner: '{{ sb_user }}'
+    group: '{{ sb_group }}'
+    mode: '0644'
+  become: true
+  notify:
+    - reload sysctl daemon
+    - restart app
+
+- meta: flush_handlers
+

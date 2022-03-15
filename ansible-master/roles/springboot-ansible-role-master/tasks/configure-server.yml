@@ -1,0 +1,66 @@
+
+
+########################
+# Create User/Group
+########################
+- name: 'Create User/Group'
+  block:
+    - name: 'Configure | Ensure group "{{ sb_group }}" exists'
+      group:
+        name: '{{ sb_group }}'
+        state: present
+
+    - name: 'Configure | Ensure user "{{ sb_user }}" exists'
+      user:
+        name: '{{ sb_user }}'
+        group: '{{ sb_group }}'
+        state: present
+  become: true
+  when: sb_create_user_group is defined and sb_create_user_group
+  tags: ['prepare-server']
+
+
+########################
+# Install JRE
+########################
+- name: Intall JRE
+  block:
+    - name: 'Configure | Create a directory if it does not exist'
+      file:
+        path: '{{ sb_app_java_base_dir }}'
+        state: directory
+        owner: '{{ sb_user }}'
+        group: '{{ sb_group }}'
+
+    - name: 'Configure | Download JRE - Version {{ sb_app_java_version }}'
+      unarchive:
+        src: '{{ sb_app_java_remote_repo }}'
+        dest: '{{ sb_app_java_base_dir }}'
+        owner: '{{ sb_user }}'
+        group: '{{ sb_group }}'
+        remote_src: yes
+        extra_opts:
+          - '--strip-components=1'
+  become: true
+  tags: ['prepare-server']
+  when: sb_app_install_java
+
+########################
+# Logs for
+########################
+
+# - name: 'Configure | Install Java | Ubuntu'
+#   debug:
+#     msg: You are working in Ubuntu System
+#   when: ansible_facts['distribution']=="Ubuntu"
+
+# - name: 'Configure | Install Java | Debian'
+#   debug:
+#     msg: You are working in Debian System
+#   when: ansible_facts['distribution']=="Debian"
+
+- name: 'Configure | Install Java | CentOS'
+  debug:
+    msg: You are working in CentOS System
+  when: ansible_facts['distribution']=="CentOS"
+

@@ -1,0 +1,66 @@
+
+
+- name: "Check vars | Assert sb_user is defined"
+  assert:
+    that:
+      - "sb_user is defined"
+    msg: "sb_user must be defined"
+  when: sb_create_user_group
+
+- name: "Check vars | Assert sb_group is defined"
+  assert:
+    that:
+      - "sb_group is defined"
+    msg: "sb_group must be defined"
+  when: sb_create_user_group
+
+- name: "Check vars | Assert sb_app_group_id is defined"
+  assert:
+    that:
+      - "sb_app_group_id is defined"
+    msg: "sb_app_group_id must be defined"
+
+- name: "Check vars | Assert sb_configuration_files is defined"
+  assert:
+    that:
+      - "sb_configuration_files is defined"
+    msg: "sb_configuration_files must be defined"
+
+- name: "Check vars | Assert sb_app_artifact_id is defined"
+  assert:
+    that:
+      - "sb_app_artifact_id is defined"
+    msg: "sb_app_artifact_id must be defined"
+
+- name: "Check vars | Assert sb_app_version is defined"
+  assert:
+    that:
+      - "sb_app_version is defined"
+    msg: "sb_app_version must be defined"
+
+- name: "Check vars | Assert sb_application_dir is defined"
+  assert:
+    that:
+      - "sb_application_dir is defined"
+    msg: "sb_application_dir must be defined"
+
+- name: "Check vars | Assert sb_app_maven_repo is defined"
+  assert:
+    that:
+      - "sb_app_maven_repo is defined"
+    msg: "sb_app_maven_repo must be defined"
+
+- name: "Check vars | Assert sb_app_maven_user is defined"
+  assert:
+    that:
+      - "sb_app_maven_user is defined"
+    msg: "sb_app_maven_user must be defined"
+
+- name: "Check vars | Assert sb_app_maven_password is defined"
+  assert:
+    that:
+      - "sb_app_maven_password is defined"
+    msg: "sb_app_maven_password must be defined"
+
+
+

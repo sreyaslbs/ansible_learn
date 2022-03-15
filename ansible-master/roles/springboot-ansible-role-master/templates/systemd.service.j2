@@ -1,0 +1,29 @@
+# {{ ansible_managed }}
+[Unit]
+Description={{ sb_app_service_name }}
+After=syslog.target network.target
+
+[Service]
+Type=idle
+
+User={{ sb_user }}
+Group={{ sb_group }}
+EnvironmentFile={{ sb_application_dir }}/app.environment
+WorkingDirectory={{ sb_application_dir }}
+ExecStart=/usr/bin/java \
+    {% if sb_app_java_opts_xms is defined %} -Xms{{ sb_app_java_opts_xms }} {% endif %} \
+    {% if sb_app_java_opts_xmx is defined %} -Xmx{{ sb_app_java_opts_xmx }} {% endif %} \
+    {% if sb_app_java_opts_others is defined %} {{sb_app_java_opts_others}} {% endif %} \
+    -jar {{ sb_app_artifact_id }}.{{ sb_app_extension }} \
+	--spring.config.location={{ sb_config_file_path }}
+    --logging.file.path={{ sb_application_logs_dir }}
+
+
+SuccessExitStatus=143
+
+TimeoutStartSec=120
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target
+

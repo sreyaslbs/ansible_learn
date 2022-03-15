@@ -1,0 +1,24 @@
+---
+# tasks file for installing springboot application
+
+- name: Verify Ansible meets version requirements.
+  assert:
+    that: "ansible_version.full is version_compare('2.1', '>=')"
+    msg: >
+      "You must update Ansible to at least 2.1"
+
+- import_tasks: configure-server.yml
+
+- import_tasks: install.yml
+
+- name: Ensure APP is started
+  service:
+    name: "{{ sb_app_service_name }}"
+    state: started
+  become: true
+
+- name: Check info URL
+  include_tasks: healtcheck.yml
+  loop: "{{ sb_app_info_urls }}"
+  when: sb_app_info_urls is defined and sb_app_info_urls
+

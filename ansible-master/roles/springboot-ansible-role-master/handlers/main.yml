@@ -1,0 +1,12 @@
+
+
+- name: reload sysctl daemon
+  shell: systemctl daemon-reload
+  become: true
+
+
+- name: restart app
+  service:
+    name: "{{ sb_app_service_name }}"
+    state: restarted
+  become: true

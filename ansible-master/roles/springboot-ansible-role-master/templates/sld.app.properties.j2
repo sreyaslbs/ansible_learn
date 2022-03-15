@@ -1,0 +1,29 @@
+
+spring.h2.console.enabled=true
+spring.datasource.url=jdbc:h2:file:./src/main/resources/db/slddatabase
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+spring.h2.console.settings.web-allow-others=true
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.hibernate.ddl-auto=update
+
+logging.file=/opt/sld/logs/sld.log
+
+
+spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+
+server.port = 8082
+#server.ssl.enabled=true
+#server.ssl.key-store-type=PKCS12
+#server.ssl.key-store=classpath:keystore/sldservice.p12
+#server.ssl.key-store-password=sldpassword
+#server.ssl.key-alias=sldservice
+
+logging.level.web=DEBUG
+
+destination.server.url = http://10.0.0.11:8082
+source.server.url = http://10.0.0.10:8082
